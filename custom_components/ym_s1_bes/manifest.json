@@ -1,0 +1,16 @@
+{
+  "domain": "ym_s1_bes",
+  "name": "YM-S1-BES BLE Meter",
+  "bluetooth": [
+    {
+      "local_name": "YUNM*"
+    }
+  ],
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": ["bluetooth"],
+  "documentation": "https://github.com/local/ym_s1_bes",
+  "iot_class": "local_polling",
+  "requirements": ["bleak-retry-connector>=4.4.0"],
+  "version": "0.1.0"
+}

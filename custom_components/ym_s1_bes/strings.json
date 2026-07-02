@@ -1,0 +1,74 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add YM-S1-BES meter",
+        "description": "Enter the meter MAC decoded from the YUNM advertisement. The BLE address can be left empty when the device is already visible to Home Assistant Bluetooth.",
+        "data": {
+          "mac": "Device MAC",
+          "address": "BLE address",
+          "name": "Name",
+          "poll_interval": "Poll interval"
+        }
+      },
+      "bluetooth_confirm": {
+        "title": "Add YM-S1-BES meter",
+        "description": "Found {advertised_name} with MAC {mac}.",
+        "data": {
+          "name": "Name",
+          "poll_interval": "Poll interval"
+        }
+      }
+    },
+    "error": {
+      "invalid_mac": "Invalid MAC address"
+    },
+    "abort": {
+      "already_configured": "This meter is already configured",
+      "not_supported": "This Bluetooth device is not a supported YM-S1-BES meter",
+      "no_discovery": "Bluetooth discovery data is no longer available"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "power": {
+        "name": "Power"
+      },
+      "energy": {
+        "name": "Energy"
+      },
+      "voltage": {
+        "name": "Voltage"
+      },
+      "current": {
+        "name": "Current"
+      },
+      "power_factor": {
+        "name": "Power factor"
+      },
+      "total_time": {
+        "name": "Total time"
+      },
+      "amount": {
+        "name": "Amount"
+      },
+      "valid_power": {
+        "name": "Valid power"
+      }
+    },
+    "button": {
+      "clear_energy": {
+        "name": "Clear energy"
+      },
+      "clear_time": {
+        "name": "Clear time"
+      },
+      "clear_amount": {
+        "name": "Clear amount"
+      },
+      "clear_all": {
+        "name": "Clear all"
+      }
+    }
+  }
+}

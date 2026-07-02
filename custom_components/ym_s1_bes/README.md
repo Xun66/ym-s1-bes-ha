@@ -1,0 +1,60 @@
+# YM-S1-BES BLE Meter for Home Assistant
+
+Custom integration for Yunmu/YM-S1-BES BLE meter sockets.
+
+## Install
+
+Copy this directory to Home Assistant:
+
+```text
+config/custom_components/ym_s1_bes
+```
+
+Restart Home Assistant.
+
+## Requirements
+
+Your ESPHome Bluetooth Proxy must support active connections:
+
+```yaml
+bluetooth_proxy:
+  active: true
+```
+
+## Add Device
+
+In Home Assistant:
+
+```text
+Settings -> Devices & services -> Add integration -> YM-S1-BES BLE Meter
+```
+
+For this device:
+
+```text
+MAC: 25:01:10:00:0B:D6
+Advertised name: YUNMD60B00100125
+```
+
+The BLE address field can usually be left empty if Home Assistant has already
+seen the device through Bluetooth or an ESPHome Bluetooth Proxy.
+
+## Entities
+
+Sensors:
+
+- Power
+- Energy
+- Voltage
+- Current
+- Power factor
+- Total time
+- Amount
+- Valid power
+
+Buttons:
+
+- Clear energy
+- Clear time
+- Clear amount
+- Clear all

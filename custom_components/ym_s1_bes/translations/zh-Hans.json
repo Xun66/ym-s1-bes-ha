@@ -1,0 +1,74 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "添加 YM-S1-BES 电量计",
+        "description": "输入从 YUNM 广播名解码出的设备 MAC。设备已经能被 Home Assistant 蓝牙看到时，BLE address 可以留空。",
+        "data": {
+          "mac": "设备 MAC",
+          "address": "BLE address",
+          "name": "名称",
+          "poll_interval": "轮询间隔"
+        }
+      },
+      "bluetooth_confirm": {
+        "title": "添加 YM-S1-BES 电量计",
+        "description": "发现 {advertised_name}，MAC 为 {mac}。",
+        "data": {
+          "name": "名称",
+          "poll_interval": "轮询间隔"
+        }
+      }
+    },
+    "error": {
+      "invalid_mac": "MAC 地址无效"
+    },
+    "abort": {
+      "already_configured": "这个设备已经配置过",
+      "not_supported": "这个蓝牙设备不是支持的 YM-S1-BES 电量计",
+      "no_discovery": "蓝牙发现数据已不可用"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "power": {
+        "name": "功率"
+      },
+      "energy": {
+        "name": "累计电量"
+      },
+      "voltage": {
+        "name": "电压"
+      },
+      "current": {
+        "name": "电流"
+      },
+      "power_factor": {
+        "name": "功率因数"
+      },
+      "total_time": {
+        "name": "累计时间"
+      },
+      "amount": {
+        "name": "累计金额"
+      },
+      "valid_power": {
+        "name": "有效功率"
+      }
+    },
+    "button": {
+      "clear_energy": {
+        "name": "清零电量"
+      },
+      "clear_time": {
+        "name": "清零时间"
+      },
+      "clear_amount": {
+        "name": "清零金额"
+      },
+      "clear_all": {
+        "name": "全部清零"
+      }
+    }
+  }
+}
