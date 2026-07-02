@@ -216,7 +216,7 @@ class YmS1BesOptionsFlow(OptionsFlow):
 
         if user_input is not None:
             action = _normalize_load_action(user_input.get(CONF_LOAD_ACTION))
-            target_id = user_input.get(LOAD_ID)
+            target_id = _normalize_load_id(loads, user_input.get(LOAD_ID))
             create_load = user_input.get(CONF_CREATE_LOAD, False)
             if create_load:
                 load_id = uuid4().hex[:8]
@@ -386,6 +386,17 @@ def _normalize_load_action(action: Any) -> str | None:
         "重命名负载": "rename",
         "删除负载": "delete",
     }.get(action, action)
+
+
+def _normalize_load_id(loads: list[dict[str, str]], value: Any) -> str | None:
+    """Return the stable load id from a UI submitted id or label."""
+    if value is None:
+        return None
+    value = str(value)
+    for load in loads:
+        if value in {load[LOAD_ID], load[LOAD_NAME]}:
+            return load[LOAD_ID]
+    return value
 
 
 def _remove_load_registry_entries(
