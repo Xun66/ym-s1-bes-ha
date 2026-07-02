@@ -15,6 +15,7 @@ from homeassistant.config_entries import (
     OptionsFlow,
 )
 from homeassistant.const import CONF_NAME
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 
 from .const import (
     CONF_ADDRESS,
@@ -169,7 +170,6 @@ class YmS1BesOptionsFlow(OptionsFlow):
     def __init__(self, entry: ConfigEntry) -> None:
         self._entry = entry
         self._pending_poll_interval: int | None = None
-        self._pending_load_id: str | None = None
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -232,8 +232,7 @@ class YmS1BesOptionsFlow(OptionsFlow):
                     errors[LOAD_ID] = "load_required"
                 if errors:
                     return self._show_load_settings_form(loads, errors)
-                self._pending_load_id = target_id
-                return await self.async_step_rename_load()
+                return await self.async_step_rename_load({LOAD_ID: target_id})
             elif action == "delete":
                 if not target_id:
                     errors[LOAD_ID] = "load_required"
@@ -242,6 +241,7 @@ class YmS1BesOptionsFlow(OptionsFlow):
                     loads = [load for load in loads if load[LOAD_ID] != target_id]
                     if active_load_id == target_id:
                         active_load_id = loads[0][LOAD_ID] if loads else None
+                    _remove_load_registry_entries(self.hass, self._entry, target_id)
             else:
                 active_load_id = get_active_load_id(self._entry)
 
@@ -265,12 +265,9 @@ class YmS1BesOptionsFlow(OptionsFlow):
     ) -> ConfigFlowResult:
         """Rename a virtual load."""
         loads = get_loads(self._entry)
-        target_id = self._pending_load_id
-        if target_id is None:
-            return await self.async_step_load_settings()
-
         errors: dict[str, str] = {}
-        if user_input is not None:
+        if user_input is not None and LOAD_NAME in user_input:
+            target_id = user_input[LOAD_ID]
             new_name = user_input[LOAD_NAME].strip()
             if not new_name:
                 errors[LOAD_NAME] = "name_required"
@@ -291,13 +288,23 @@ class YmS1BesOptionsFlow(OptionsFlow):
                     ),
                 )
 
+        target_id = None
+        if user_input is not None:
+            target_id = user_input.get(LOAD_ID)
+        if not target_id:
+            target_id = get_active_load_id(self._entry)
         target_name = next(
             (load[LOAD_NAME] for load in loads if load[LOAD_ID] == target_id), ""
         )
         return self.async_show_form(
             step_id="rename_load",
             data_schema=vol.Schema(
-                {vol.Required(LOAD_NAME, default=target_name): str}
+                {
+                    vol.Required(LOAD_ID, default=target_id): vol.In(
+                        load_options(loads)
+                    ),
+                    vol.Required(LOAD_NAME, default=target_name): str,
+                }
             ),
             errors=errors,
         )
@@ -349,3 +356,26 @@ def _unique_load_name(loads: list[dict[str, str]]) -> str:
     while f"{DEFAULT_LOAD_NAME} {suffix}" in existing_names:
         suffix += 1
     return f"{DEFAULT_LOAD_NAME} {suffix}"
+
+
+def _remove_load_registry_entries(
+    hass,
+    entry: ConfigEntry,
+    load_id: str,
+) -> None:
+    """Remove registry rows that belong to a deleted virtual load."""
+    mac = entry.data[CONF_MAC]
+    unique_id_prefix = f"{mac.replace(':', '').lower()}_load_{load_id}_"
+    entity_registry = er.async_get(hass)
+    for entity_entry in er.async_entries_for_config_entry(
+        entity_registry, entry.entry_id
+    ):
+        if entity_entry.unique_id.startswith(unique_id_prefix):
+            entity_registry.async_remove(entity_entry.entity_id)
+
+    device_registry = dr.async_get(hass)
+    device = device_registry.async_get_device(
+        identifiers={(DOMAIN, f"{mac}_load_{load_id}")}
+    )
+    if device is not None:
+        device_registry.async_remove_device(device.id)
