@@ -43,7 +43,7 @@
           "create_load": "创建新负载",
           "id": "选择 device",
           "load_action": "选择操作",
-          "name": "设置名称"
+          "load_name": "设置名称"
         }
       },
       "rename_load": {

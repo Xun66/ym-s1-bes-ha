@@ -1,7 +1,6 @@
 """Config flow for YM-S1-BES BLE meters."""
 
 from __future__ import annotations
-
 from typing import Any
 from uuid import uuid4
 
@@ -22,6 +21,7 @@ from .const import (
     CONF_CONFIGURE_LOADS,
     CONF_CREATE_LOAD,
     CONF_LOAD_ACTION,
+    CONF_LOAD_NAME,
     CONF_MAC,
     CONF_POLL_INTERVAL,
     DEFAULT_LOAD_NAME,
@@ -230,7 +230,7 @@ class YmS1BesOptionsFlow(OptionsFlow):
             elif action == "rename":
                 if not target_id:
                     errors[LOAD_ID] = "load_required"
-                new_name = str(user_input.get(LOAD_NAME, "")).strip()
+                new_name = str(user_input.get(CONF_LOAD_NAME, "")).strip()
                 if not new_name:
                     errors[LOAD_NAME] = "name_required"
                 if errors:
@@ -346,7 +346,7 @@ class YmS1BesOptionsFlow(OptionsFlow):
                 "",
             )
             schema_fields[
-                vol.Optional(LOAD_NAME, default=selected_load_name)
+                vol.Optional(CONF_LOAD_NAME, default=selected_load_name)
             ] = str
 
         return self.async_show_form(

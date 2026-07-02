@@ -12,6 +12,7 @@ CONF_ACTIVE_LOAD_ID = "active_load_id"
 CONF_CONFIGURE_LOADS = "configure_loads"
 CONF_CREATE_LOAD = "create_load"
 CONF_LOAD_ACTION = "load_action"
+CONF_LOAD_NAME = "load_name"
 
 LOAD_ID = "id"
 LOAD_NAME = "name"

@@ -43,7 +43,7 @@
           "create_load": "Create new load",
           "id": "Device",
           "load_action": "Action",
-          "name": "Name"
+          "load_name": "Name"
         }
       },
       "rename_load": {
