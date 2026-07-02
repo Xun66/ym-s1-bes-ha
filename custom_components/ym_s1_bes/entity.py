@@ -5,7 +5,7 @@ from __future__ import annotations
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import CONF_MAC, DOMAIN
+from .const import CONF_MAC, DEFAULT_NAME, DOMAIN
 from .coordinator import YmS1BesCoordinator
 
 
@@ -22,6 +22,6 @@ class YmS1BesEntity(CoordinatorEntity[YmS1BesCoordinator]):
             identifiers={(DOMAIN, mac)},
             manufacturer="Yunmu",
             model="YM-S1-BES",
-            name=coordinator.config_entry.title,
+            name=DEFAULT_NAME,
             sw_version=str(coordinator.data.firmware) if coordinator.data else None,
         )
