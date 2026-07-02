@@ -157,9 +157,15 @@ class YmS1BesOptionsFlow(OptionsFlow):
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         """Show the options menu."""
-        menu_options = ["add_load"]
+        menu_options = {"add_load": "Add load"}
         if get_loads(self._entry):
-            menu_options.extend(["select_active_load", "rename_load", "remove_load"])
+            menu_options.update(
+                {
+                    "select_active_load": "Select active load",
+                    "rename_load": "Rename load",
+                    "remove_load": "Remove load",
+                }
+            )
         return self.async_show_menu(step_id="init", menu_options=menu_options)
 
     async def async_step_add_load(
