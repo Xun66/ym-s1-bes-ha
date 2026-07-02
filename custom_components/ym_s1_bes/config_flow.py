@@ -215,7 +215,7 @@ class YmS1BesOptionsFlow(OptionsFlow):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            action = user_input.get(CONF_LOAD_ACTION)
+            action = _normalize_load_action(user_input.get(CONF_LOAD_ACTION))
             target_id = user_input.get(LOAD_ID)
             create_load = user_input.get(CONF_CREATE_LOAD, False)
             if create_load:
@@ -377,6 +377,15 @@ def _unique_load_name(loads: list[dict[str, str]]) -> str:
     while f"{DEFAULT_LOAD_NAME} {suffix}" in existing_names:
         suffix += 1
     return f"{DEFAULT_LOAD_NAME} {suffix}"
+
+
+def _normalize_load_action(action: Any) -> str | None:
+    """Return the stable load action key from a UI submitted value."""
+    return {
+        "设为当前负载": "set_active",
+        "重命名负载": "rename",
+        "删除负载": "delete",
+    }.get(action, action)
 
 
 def _remove_load_registry_entries(
