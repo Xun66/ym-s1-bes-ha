@@ -29,6 +29,44 @@
       "no_discovery": "蓝牙发现数据已不可用"
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "管理负载",
+        "menu_options": {
+          "add_load": "新增负载",
+          "select_active_load": "切换当前负载",
+          "rename_load": "重命名负载",
+          "remove_load": "删除负载"
+        }
+      },
+      "add_load": {
+        "title": "新增负载",
+        "data": {
+          "name": "负载名称"
+        }
+      },
+      "select_active_load": {
+        "title": "切换当前负载",
+        "data": {
+          "active_load_id": "当前负载"
+        }
+      },
+      "rename_load": {
+        "title": "重命名负载",
+        "data": {
+          "id": "负载",
+          "name": "新名称"
+        }
+      },
+      "remove_load": {
+        "title": "删除负载",
+        "data": {
+          "id": "负载"
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "power": {
@@ -54,6 +92,14 @@
       },
       "valid_power": {
         "name": "有效功率"
+      }
+    },
+    "number": {
+      "unit_price": {
+        "name": "电价"
+      },
+      "valid_power": {
+        "name": "计时功率"
       }
     },
     "button": {

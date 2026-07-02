@@ -7,6 +7,11 @@ DOMAIN = "ym_s1_bes"
 CONF_MAC = "mac"
 CONF_ADDRESS = "address"
 CONF_POLL_INTERVAL = "poll_interval"
+CONF_LOADS = "loads"
+CONF_ACTIVE_LOAD_ID = "active_load_id"
+
+LOAD_ID = "id"
+LOAD_NAME = "name"
 
 DEFAULT_POLL_INTERVAL = 30
 DEFAULT_NAME = "YM-S1-BES"

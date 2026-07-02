@@ -29,6 +29,44 @@
       "no_discovery": "Bluetooth discovery data is no longer available"
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Manage loads",
+        "menu_options": {
+          "add_load": "Add load",
+          "select_active_load": "Select active load",
+          "rename_load": "Rename load",
+          "remove_load": "Remove load"
+        }
+      },
+      "add_load": {
+        "title": "Add load",
+        "data": {
+          "name": "Load name"
+        }
+      },
+      "select_active_load": {
+        "title": "Select active load",
+        "data": {
+          "active_load_id": "Active load"
+        }
+      },
+      "rename_load": {
+        "title": "Rename load",
+        "data": {
+          "id": "Load",
+          "name": "New name"
+        }
+      },
+      "remove_load": {
+        "title": "Remove load",
+        "data": {
+          "id": "Load"
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "power": {
@@ -54,6 +92,14 @@
       },
       "valid_power": {
         "name": "Valid power"
+      }
+    },
+    "number": {
+      "unit_price": {
+        "name": "Unit price"
+      },
+      "valid_power": {
+        "name": "Timing power"
       }
     },
     "button": {

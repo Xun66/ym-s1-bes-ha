@@ -3,21 +3,31 @@
 from __future__ import annotations
 
 from typing import Any
+from uuid import uuid4
 
 import voluptuous as vol
 
 from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.const import CONF_NAME
 
 from .const import (
+    CONF_ACTIVE_LOAD_ID,
     CONF_ADDRESS,
     CONF_MAC,
     CONF_POLL_INTERVAL,
     DEFAULT_NAME,
     DEFAULT_POLL_INTERVAL,
     DOMAIN,
+    LOAD_ID,
+    LOAD_NAME,
 )
+from .load import get_active_load_id, get_loads, load_options, options_with_loads
 from .protocol import advertised_name_to_mac, mac_to_advertised_name, normalize_mac
 
 
@@ -28,6 +38,11 @@ class YmS1BesConfigFlow(ConfigFlow, domain=DOMAIN):
 
     def __init__(self) -> None:
         self._discovery: dict[str, Any] | None = None
+
+    @staticmethod
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
+        """Create the options flow."""
+        return YmS1BesOptionsFlow(config_entry)
 
     async def async_step_bluetooth(
         self, discovery_info: BluetoothServiceInfoBleak
@@ -130,3 +145,108 @@ def _discovery_name(discovery_info: BluetoothServiceInfoBleak) -> str | None:
         getattr(advertisement, "local_name", None)
         or getattr(discovery_info, "name", None)
     )
+
+
+class YmS1BesOptionsFlow(OptionsFlow):
+    """Handle YM-S1-BES options."""
+
+    def __init__(self, entry: ConfigEntry) -> None:
+        self._entry = entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Show the options menu."""
+        menu_options = ["add_load"]
+        if get_loads(self._entry):
+            menu_options.extend(["select_active_load", "rename_load", "remove_load"])
+        return self.async_show_menu(step_id="init", menu_options=menu_options)
+
+    async def async_step_add_load(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Add a virtual load."""
+        if user_input is not None:
+            loads = get_loads(self._entry)
+            load_id = uuid4().hex[:8]
+            loads.append({LOAD_ID: load_id, LOAD_NAME: user_input[LOAD_NAME].strip()})
+            active_load_id = get_active_load_id(self._entry) or load_id
+            return self.async_create_entry(
+                title="",
+                data=options_with_loads(self._entry, loads, active_load_id),
+            )
+
+        return self.async_show_form(
+            step_id="add_load",
+            data_schema=vol.Schema({vol.Required(LOAD_NAME): str}),
+        )
+
+    async def async_step_select_active_load(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Select the load that receives transient readings."""
+        loads = get_loads(self._entry)
+        if user_input is not None:
+            return self.async_create_entry(
+                title="",
+                data=options_with_loads(
+                    self._entry, loads, user_input[CONF_ACTIVE_LOAD_ID]
+                ),
+            )
+
+        return self.async_show_form(
+            step_id="select_active_load",
+            data_schema=vol.Schema(
+                {vol.Required(CONF_ACTIVE_LOAD_ID): vol.In(load_options(loads))}
+            ),
+        )
+
+    async def async_step_rename_load(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Rename a virtual load."""
+        loads = get_loads(self._entry)
+        if user_input is not None:
+            target_id = user_input[LOAD_ID]
+            new_name = user_input[LOAD_NAME].strip()
+            renamed = [
+                {**load, LOAD_NAME: new_name} if load[LOAD_ID] == target_id else load
+                for load in loads
+            ]
+            return self.async_create_entry(
+                title="",
+                data=options_with_loads(
+                    self._entry, renamed, get_active_load_id(self._entry)
+                ),
+            )
+
+        return self.async_show_form(
+            step_id="rename_load",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(LOAD_ID): vol.In(load_options(loads)),
+                    vol.Required(LOAD_NAME): str,
+                }
+            ),
+        )
+
+    async def async_step_remove_load(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Remove a virtual load."""
+        loads = get_loads(self._entry)
+        if user_input is not None:
+            target_id = user_input[LOAD_ID]
+            remaining = [load for load in loads if load[LOAD_ID] != target_id]
+            active_load_id = get_active_load_id(self._entry)
+            if active_load_id == target_id:
+                active_load_id = remaining[0][LOAD_ID] if remaining else None
+            return self.async_create_entry(
+                title="",
+                data=options_with_loads(self._entry, remaining, active_load_id),
+            )
+
+        return self.async_show_form(
+            step_id="remove_load",
+            data_schema=vol.Schema({vol.Required(LOAD_ID): vol.In(load_options(loads))}),
+        )

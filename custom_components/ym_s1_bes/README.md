@@ -2,6 +2,9 @@
 
 Custom integration for Yunmu/YM-S1-BES BLE meter sockets.
 
+It reads meter data locally over BLE and does not depend on the original
+WeChat Mini-App or the vendor cloud.
+
 ## Install
 
 Copy this directory to Home Assistant:
@@ -58,3 +61,12 @@ Buttons:
 - Clear time
 - Clear amount
 - Clear all
+
+Numbers:
+
+- Unit price
+- Timing power
+
+Virtual loads can be managed from the integration options. Each load is exposed
+as a separate Home Assistant device with transient power, voltage, current, and
+power factor sensors. Only the selected active load receives live values.

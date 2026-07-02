@@ -55,3 +55,11 @@ class YmS1BesCoordinator(DataUpdateCoordinator[MeterReading]):
         ack = await self.client.clear(kind)
         await self.async_request_refresh()
         return ack
+
+    async def async_set_config(
+        self, unit_price: float, valid_power_w: int
+    ) -> MeterReading:
+        """Set meter configuration and refresh coordinator data."""
+        reading = await self.client.set_config(unit_price, valid_power_w)
+        self.async_set_updated_data(reading)
+        return reading

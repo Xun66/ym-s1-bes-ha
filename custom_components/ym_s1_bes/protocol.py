@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from .const import BLE_HEAD
 
 READ_PAYLOAD = bytes.fromhex("e1 e9 e1")
+COMMAND_XOR = 0xE9
 
 CLEAR_PAYLOADS: dict[str, bytes] = {
     "energy": bytes.fromhex("ee eb e8 17 e1"),
@@ -26,6 +27,9 @@ class MeterReading:
     voltage_v: float
     current_a: float
     power_factor: float
+    power_upper_limit_w: int
+    power_lower_limit_w: int
+    unit_price: float
     amount: float
     valid_power_w: int
     firmware: int
@@ -146,6 +150,9 @@ def decode_meter_payload(payload: bytes) -> MeterReading:
         voltage_v=_u16be(decoded, 13) / 10,
         current_a=_u16be(decoded, 15) / 1000,
         power_factor=decoded[17] / 100,
+        power_upper_limit_w=_u16be(decoded, 18),
+        power_lower_limit_w=_u16be(decoded, 20),
+        unit_price=_u16be(decoded, 22) / 100,
         amount=_u32be(decoded, 24) / 100,
         valid_power_w=_u16be(decoded, 28),
         firmware=decoded[30],
@@ -165,6 +172,50 @@ def decode_clear_ack(payload: bytes) -> ClearAck:
         amount=amount_raw / 100,
         firmware=decoded[14],
     )
+
+
+def decode_set_config_ack(payload: bytes) -> MeterReading:
+    """Decode a 0x2D set-config acknowledgement."""
+    decoded = _decode_semantic(payload)
+    if len(decoded) < 32 or decoded[0] != 0x2D:
+        raise ValueError("not a set-config acknowledgement payload")
+
+    return MeterReading(
+        total_kwh=_u32be(decoded, 3) / 100,
+        total_time_minutes=_u32be(decoded, 7),
+        power_w=_u16be(decoded, 11) / 10,
+        voltage_v=_u16be(decoded, 13) / 10,
+        current_a=_u16be(decoded, 15) / 1000,
+        power_factor=decoded[17] / 100,
+        power_upper_limit_w=_u16be(decoded, 18),
+        power_lower_limit_w=_u16be(decoded, 20),
+        unit_price=_u16be(decoded, 22) / 100,
+        amount=_u32be(decoded, 24) / 100,
+        valid_power_w=_u16be(decoded, 28),
+        firmware=decoded[30],
+    )
+
+
+def build_set_config_payload(unit_price: float, valid_power_w: int) -> bytes:
+    """Build the 0x2D payload for unit price and timing power."""
+    price_cents = round(unit_price * 100)
+    if not 0 <= price_cents <= 999:
+        raise ValueError("unit price must be between 0 and 9.99")
+    if not 0 <= valid_power_w <= 999:
+        raise ValueError("valid power must be between 0 and 999")
+
+    logical = bytearray(
+        [
+            0x2D,
+            0x04,
+            (valid_power_w >> 8) & 0xFF,
+            valid_power_w & 0xFF,
+            (price_cents >> 8) & 0xFF,
+            price_cents & 0xFF,
+        ]
+    )
+    logical.append(sum(logical) & 0xFF)
+    return bytes(byte ^ COMMAND_XOR for byte in logical)
 
 
 def _decode_semantic(payload: bytes) -> bytes:

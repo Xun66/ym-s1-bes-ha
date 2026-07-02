@@ -20,8 +20,10 @@ from .protocol import (
     MeterReading,
     YmS1BesProtocol,
     advertised_name_to_mac,
+    build_set_config_payload,
     decode_clear_ack,
     decode_meter_payload,
+    decode_set_config_ack,
     mac_to_advertised_name,
     normalize_mac,
 )
@@ -49,6 +51,12 @@ class YmS1BesBleClient:
         payload = CLEAR_PAYLOADS[kind]
         response = await self._request(payload)
         return decode_clear_ack(response)
+
+    async def set_config(self, unit_price: float, valid_power_w: int) -> MeterReading:
+        """Set unit price and timing power."""
+        payload = build_set_config_payload(unit_price, valid_power_w)
+        response = await self._request(payload)
+        return decode_set_config_ack(response)
 
     async def _request(self, payload: bytes) -> bytes:
         async with self._lock:
