@@ -15,7 +15,6 @@
         "title": "Add YM-S1-BES meter",
         "description": "Found {advertised_name} with MAC {mac}.",
         "data": {
-          "name": "Name",
           "poll_interval": "Poll interval"
         }
       }

@@ -70,7 +70,7 @@ class YmS1BesConfigFlow(ConfigFlow, domain=DOMAIN):
         self._discovery = {
             CONF_MAC: mac,
             CONF_ADDRESS: discovery_info.address,
-            CONF_NAME: f"{DEFAULT_NAME} {mac[-5:]}",
+            CONF_NAME: name or mac_to_advertised_name(mac),
         }
         self.context["title_placeholders"] = {
             "name": name or DEFAULT_NAME,
@@ -89,7 +89,7 @@ class YmS1BesConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             data = {
                 **self._discovery,
-                CONF_NAME: user_input.get(CONF_NAME) or self._discovery[CONF_NAME],
+                CONF_NAME: self._discovery[CONF_NAME],
                 CONF_POLL_INTERVAL: user_input[CONF_POLL_INTERVAL],
             }
             return self.async_create_entry(
@@ -100,7 +100,6 @@ class YmS1BesConfigFlow(ConfigFlow, domain=DOMAIN):
 
         schema = vol.Schema(
             {
-                vol.Optional(CONF_NAME, default=self._discovery[CONF_NAME]): str,
                 vol.Optional(
                     CONF_POLL_INTERVAL, default=DEFAULT_POLL_INTERVAL
                 ): vol.All(vol.Coerce(int), vol.Range(min=10, max=3600)),

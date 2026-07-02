@@ -15,7 +15,6 @@
         "title": "添加 YM-S1-BES 电量计",
         "description": "发现 {advertised_name}，MAC 为 {mac}。",
         "data": {
-          "name": "名称",
           "poll_interval": "轮询间隔"
         }
       }
