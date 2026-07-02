@@ -40,6 +40,7 @@ class YmS1BesBleClient:
         self.address = address
         self.protocol = YmS1BesProtocol(self.mac)
         self._lock = asyncio.Lock()
+        self.last_rssi: int | None = None
 
     async def read_meter(self) -> MeterReading:
         """Read current meter data."""
@@ -111,6 +112,7 @@ class YmS1BesBleClient:
     def _find_device(self):
         """Find a connectable BLE device via HA Bluetooth."""
         if self.address:
+            self._refresh_rssi_for_address(self.address)
             device = bluetooth.async_ble_device_from_address(
                 self.hass, self.address, connectable=True
             )
@@ -131,6 +133,7 @@ class YmS1BesBleClient:
             device = getattr(service_info, "device", None)
             if device is not None:
                 self.address = device.address
+                self.last_rssi = _service_info_rssi(service_info)
                 return device
 
             address = getattr(service_info, "address", None)
@@ -140,9 +143,23 @@ class YmS1BesBleClient:
                 )
                 if device is not None:
                     self.address = address
+                    self.last_rssi = _service_info_rssi(service_info)
                     return device
 
         return None
+
+    def _refresh_rssi_for_address(self, address: str) -> None:
+        """Refresh RSSI from the latest advertisement for a BLE address."""
+        target = address.upper()
+        for service_info in _iter_service_info(self.hass):
+            service_address = (getattr(service_info, "address", None) or "").upper()
+            device_address = (
+                getattr(getattr(service_info, "device", None), "address", None) or ""
+            ).upper()
+            if target not in {service_address, device_address}:
+                continue
+            self.last_rssi = _service_info_rssi(service_info)
+            return
 
 
 def is_ym_s1_advertisement(name: str | None) -> bool:
@@ -162,3 +179,11 @@ def _iter_service_info(hass: HomeAssistant):
         return discovered(hass, connectable=True)
     except TypeError:
         return discovered(hass)
+
+
+def _service_info_rssi(service_info) -> int | None:
+    """Return RSSI from a HA Bluetooth service info object."""
+    rssi = getattr(service_info, "rssi", None)
+    if rssi is None:
+        rssi = getattr(getattr(service_info, "advertisement", None), "rssi", None)
+    return int(rssi) if rssi is not None else None

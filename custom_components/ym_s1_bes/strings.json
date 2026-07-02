@@ -32,39 +32,30 @@
   "options": {
     "step": {
       "init": {
-        "title": "Manage loads",
-        "menu_options": {
-          "add_load": "Add load",
-          "select_active_load": "Select active load",
-          "rename_load": "Rename load",
-          "remove_load": "Remove load"
+        "title": "Device settings",
+        "data": {
+          "poll_interval": "Poll interval",
+          "configure_loads": "Load settings"
         }
       },
-      "add_load": {
-        "title": "Add load",
+      "load_settings": {
+        "title": "Load settings",
         "data": {
-          "name": "Load name"
-        }
-      },
-      "select_active_load": {
-        "title": "Select active load",
-        "data": {
-          "active_load_id": "Active load"
+          "create_load": "Create new load",
+          "id": "Device",
+          "load_action": "Action"
         }
       },
       "rename_load": {
         "title": "Rename load",
         "data": {
-          "id": "Load",
-          "name": "New name"
-        }
-      },
-      "remove_load": {
-        "title": "Remove load",
-        "data": {
-          "id": "Load"
+          "name": "Name"
         }
       }
+    },
+    "error": {
+      "load_required": "Select a load first",
+      "name_required": "Enter a name"
     }
   },
   "entity": {
@@ -92,6 +83,9 @@
       },
       "valid_power": {
         "name": "Valid power"
+      },
+      "rssi": {
+        "name": "RSSI"
       }
     },
     "number": {
@@ -114,6 +108,11 @@
       },
       "clear_all": {
         "name": "Clear all"
+      }
+    },
+    "binary_sensor": {
+      "connected": {
+        "name": "Connected"
       }
     }
   }

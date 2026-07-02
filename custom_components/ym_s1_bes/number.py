@@ -75,6 +75,7 @@ class YmS1BesNumber(YmS1BesEntity, NumberEntity):
     ) -> None:
         super().__init__(coordinator, description.key)
         self.entity_description = description
+        self._attr_translation_key = description.translation_key
 
     @property
     def native_value(self) -> float | int | None:

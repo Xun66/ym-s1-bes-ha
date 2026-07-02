@@ -32,39 +32,30 @@
   "options": {
     "step": {
       "init": {
-        "title": "管理负载",
-        "menu_options": {
-          "add_load": "新增负载",
-          "select_active_load": "切换当前负载",
-          "rename_load": "重命名负载",
-          "remove_load": "删除负载"
+        "title": "设备设置",
+        "data": {
+          "poll_interval": "查询间隔（秒）",
+          "configure_loads": "负载设置"
         }
       },
-      "add_load": {
-        "title": "新增负载",
+      "load_settings": {
+        "title": "负载设置",
         "data": {
-          "name": "负载名称"
-        }
-      },
-      "select_active_load": {
-        "title": "切换当前负载",
-        "data": {
-          "active_load_id": "当前负载"
+          "create_load": "创建新负载",
+          "id": "选择 device",
+          "load_action": "选择操作"
         }
       },
       "rename_load": {
         "title": "重命名负载",
         "data": {
-          "id": "负载",
-          "name": "新名称"
-        }
-      },
-      "remove_load": {
-        "title": "删除负载",
-        "data": {
-          "id": "负载"
+          "name": "设置名称"
         }
       }
+    },
+    "error": {
+      "load_required": "请先选择负载",
+      "name_required": "请输入名称"
     }
   },
   "entity": {
@@ -92,6 +83,9 @@
       },
       "valid_power": {
         "name": "有效功率"
+      },
+      "rssi": {
+        "name": "RSSI"
       }
     },
     "number": {
@@ -114,6 +108,11 @@
       },
       "clear_all": {
         "name": "全部清零"
+      }
+    },
+    "binary_sensor": {
+      "connected": {
+        "name": "连接状态"
       }
     }
   }

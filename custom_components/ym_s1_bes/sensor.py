@@ -98,6 +98,14 @@ SENSOR_DESCRIPTIONS: tuple[YmS1BesSensorDescription, ...] = (
         device_class=SensorDeviceClass.POWER,
         native_unit_of_measurement=UnitOfPower.WATT,
     ),
+    YmS1BesSensorDescription(
+        key="rssi",
+        translation_key="rssi",
+        value_attr="rssi",
+        device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement="dBm",
+    ),
 )
 
 LOAD_SENSOR_KEYS = {"power", "voltage", "current", "power_factor"}
@@ -138,10 +146,13 @@ class YmS1BesSensor(YmS1BesEntity, SensorEntity):
     ) -> None:
         super().__init__(coordinator, description.key)
         self.entity_description = description
+        self._attr_translation_key = description.translation_key
 
     @property
     def native_value(self):
         """Return the latest sensor value."""
+        if self.entity_description.value_attr == "rssi":
+            return self.coordinator.last_rssi
         return getattr(self.coordinator.data, self.entity_description.value_attr)
 
 
@@ -172,6 +183,7 @@ class YmS1BesLoadSensor(CoordinatorEntity[YmS1BesCoordinator], SensorEntity):
             name=load[LOAD_NAME],
             via_device=(DOMAIN, mac),
         )
+        self._attr_translation_key = description.translation_key
 
     @property
     def available(self) -> bool:
