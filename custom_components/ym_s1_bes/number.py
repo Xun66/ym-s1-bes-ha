@@ -30,6 +30,7 @@ class YmS1BesNumberDescription(NumberEntityDescription):
 NUMBER_DESCRIPTIONS: tuple[YmS1BesNumberDescription, ...] = (
     YmS1BesNumberDescription(
         key="unit_price",
+        name="Unit price",
         translation_key="unit_price",
         value_attr="unit_price",
         native_min_value=0,
@@ -40,6 +41,7 @@ NUMBER_DESCRIPTIONS: tuple[YmS1BesNumberDescription, ...] = (
     ),
     YmS1BesNumberDescription(
         key="valid_power",
+        name="Timing power",
         translation_key="valid_power",
         value_attr="valid_power_w",
         native_min_value=1,

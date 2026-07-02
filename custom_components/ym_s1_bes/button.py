@@ -25,21 +25,25 @@ class YmS1BesButtonDescription(ButtonEntityDescription):
 BUTTON_DESCRIPTIONS: tuple[YmS1BesButtonDescription, ...] = (
     YmS1BesButtonDescription(
         key="clear_energy",
+        name="Clear energy",
         translation_key="clear_energy",
         clear_kind="energy",
     ),
     YmS1BesButtonDescription(
         key="clear_time",
+        name="Clear time",
         translation_key="clear_time",
         clear_kind="time",
     ),
     YmS1BesButtonDescription(
         key="clear_amount",
+        name="Clear amount",
         translation_key="clear_amount",
         clear_kind="amount",
     ),
     YmS1BesButtonDescription(
         key="clear_all",
+        name="Clear all",
         translation_key="clear_all",
         clear_kind="all",
     ),

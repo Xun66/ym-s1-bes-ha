@@ -39,6 +39,7 @@ class YmS1BesSensorDescription(SensorEntityDescription):
 SENSOR_DESCRIPTIONS: tuple[YmS1BesSensorDescription, ...] = (
     YmS1BesSensorDescription(
         key="power",
+        name="Power",
         translation_key="power",
         value_attr="power_w",
         device_class=SensorDeviceClass.POWER,
@@ -47,6 +48,7 @@ SENSOR_DESCRIPTIONS: tuple[YmS1BesSensorDescription, ...] = (
     ),
     YmS1BesSensorDescription(
         key="energy",
+        name="Energy",
         translation_key="energy",
         value_attr="total_kwh",
         device_class=SensorDeviceClass.ENERGY,
@@ -55,6 +57,7 @@ SENSOR_DESCRIPTIONS: tuple[YmS1BesSensorDescription, ...] = (
     ),
     YmS1BesSensorDescription(
         key="voltage",
+        name="Voltage",
         translation_key="voltage",
         value_attr="voltage_v",
         device_class=SensorDeviceClass.VOLTAGE,
@@ -63,6 +66,7 @@ SENSOR_DESCRIPTIONS: tuple[YmS1BesSensorDescription, ...] = (
     ),
     YmS1BesSensorDescription(
         key="current",
+        name="Current",
         translation_key="current",
         value_attr="current_a",
         device_class=SensorDeviceClass.CURRENT,
@@ -71,12 +75,14 @@ SENSOR_DESCRIPTIONS: tuple[YmS1BesSensorDescription, ...] = (
     ),
     YmS1BesSensorDescription(
         key="power_factor",
+        name="Power factor",
         translation_key="power_factor",
         value_attr="power_factor",
         state_class=SensorStateClass.MEASUREMENT,
     ),
     YmS1BesSensorDescription(
         key="total_time",
+        name="Total time",
         translation_key="total_time",
         value_attr="total_time_minutes",
         device_class=SensorDeviceClass.DURATION,
@@ -85,6 +91,7 @@ SENSOR_DESCRIPTIONS: tuple[YmS1BesSensorDescription, ...] = (
     ),
     YmS1BesSensorDescription(
         key="amount",
+        name="Amount",
         translation_key="amount",
         value_attr="amount",
         device_class=SensorDeviceClass.MONETARY,
@@ -93,6 +100,7 @@ SENSOR_DESCRIPTIONS: tuple[YmS1BesSensorDescription, ...] = (
     ),
     YmS1BesSensorDescription(
         key="valid_power",
+        name="Valid power",
         translation_key="valid_power",
         value_attr="valid_power_w",
         device_class=SensorDeviceClass.POWER,
@@ -100,6 +108,7 @@ SENSOR_DESCRIPTIONS: tuple[YmS1BesSensorDescription, ...] = (
     ),
     YmS1BesSensorDescription(
         key="rssi",
+        name="RSSI",
         translation_key="rssi",
         value_attr="rssi",
         device_class=SensorDeviceClass.SIGNAL_STRENGTH,
