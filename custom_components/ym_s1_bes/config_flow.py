@@ -230,9 +230,18 @@ class YmS1BesOptionsFlow(OptionsFlow):
             elif action == "rename":
                 if not target_id:
                     errors[LOAD_ID] = "load_required"
+                new_name = str(user_input.get(LOAD_NAME, "")).strip()
+                if not new_name:
+                    errors[LOAD_NAME] = "name_required"
                 if errors:
                     return self._show_load_settings_form(loads, errors)
-                return await self.async_step_rename_load({LOAD_ID: target_id})
+                loads = [
+                    {**load, LOAD_NAME: new_name}
+                    if load[LOAD_ID] == target_id
+                    else load
+                    for load in loads
+                ]
+                active_load_id = get_active_load_id(self._entry)
             elif action == "delete":
                 if not target_id:
                     errors[LOAD_ID] = "load_required"
@@ -317,8 +326,9 @@ class YmS1BesOptionsFlow(OptionsFlow):
             vol.Optional(CONF_CREATE_LOAD, default=False): bool,
         }
         if loads:
+            selected_load_id = get_active_load_id(self._entry)
             schema_fields[
-                vol.Optional(LOAD_ID, default=get_active_load_id(self._entry))
+                vol.Optional(LOAD_ID, default=selected_load_id)
             ] = vol.In(load_options(loads))
             schema_fields[vol.Optional(CONF_LOAD_ACTION, default="set_active")] = vol.In(
                 {
@@ -327,6 +337,17 @@ class YmS1BesOptionsFlow(OptionsFlow):
                     "delete": "删除负载",
                 }
             )
+            selected_load_name = next(
+                (
+                    load[LOAD_NAME]
+                    for load in loads
+                    if load[LOAD_ID] == selected_load_id
+                ),
+                "",
+            )
+            schema_fields[
+                vol.Optional(LOAD_NAME, default=selected_load_name)
+            ] = str
 
         return self.async_show_form(
             step_id="load_settings",
